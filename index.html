@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吃瓜早报 · 全网热点聚合</title>
+<style>
+  :root{
+    --ink:#13161f;
+    --ink-2:#1b2030;
+    --ink-3:#262d40;
+    --paper:#f3efe4;
+    --paper-dim:#a9aebb;
+    --red:#e6483d;
+    --gold:#f3b340;
+    --teal:#4fc1b0;
+    --line:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    background:var(--ink);
+    color:var(--paper);
+    line-height:1.55;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 60px;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    padding-bottom:18px;
+    border-bottom:2px solid var(--line);
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .stamp{
+    border:3px solid var(--red);
+    color:var(--red);
+    font-weight:900;
+    font-size:20px;
+    padding:6px 10px;
+    transform:rotate(-6deg);
+    border-radius:4px;
+    letter-spacing:4px;
+    flex-shrink:0;
+  }
+  .brand h1{
+    margin:0;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:2px;
+  }
+  .brand p{
+    margin:4px 0 0;
+    font-size:13px;
+    color:var(--paper-dim);
+    letter-spacing:1px;
+  }
+  .clock-box{
+    text-align:right;
+    font-size:13px;
+    color:var(--paper-dim);
+  }
+  .clock-box .time{
+    font-family:"Consolas","Menlo",monospace;
+    font-size:22px;
+    color:var(--gold);
+    font-weight:700;
+    letter-spacing:1px;
+  }
+  .live-dot{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--red);margin-right:6px;
+    animation:pulse 1.6s infinite;
+    vertical-align:middle;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+  /* ---------- Grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+  }
+  @media (max-width:760px){
+    .grid{grid-template-columns:1fr;}
+    header{flex-direction:column;}
+    .clock-box{text-align:left;}
+  }
+
+  .card{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .card-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+  }
+  .tag{
+    width:34px;height:34px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:16px;
+    border-radius:6px;
+    transform:rotate(-4deg);
+  }
+  .tag.gua{background:var(--red);color:#fff;}
+  .tag.star{background:var(--gold);color:#1b1b1b;}
+  .tag.news{background:var(--teal);color:#10221f;}
+  .tag.world{background:#7c8cf8;color:#10142b;}
+
+  .card-head h2{
+    margin:0;font-size:16px;font-weight:800;letter-spacing:1px;
+  }
+  .card-head .sub{
+    margin:2px 0 0;font-size:11px;color:var(--paper-dim);letter-spacing:1px;
+  }
+  .status{
+    margin-left:auto;font-size:11px;color:var(--paper-dim);
+    font-family:"Consolas","Menlo",monospace;
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  ul.list{
+    list-style:none;margin:0;padding:0;
+    flex:1;
+  }
+  ul.list li{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 16px;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  ul.list li:last-child{border-bottom:none;}
+  .rank{
+    flex-shrink:0;
+    width:24px;height:24px;border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Consolas","Menlo",monospace;
+    font-weight:800;font-size:12px;
+    background:var(--ink-3);color:var(--paper-dim);
+  }
+  ul.list li:nth-child(1) .rank,ul.list li:nth-child(2) .rank,ul.list li:nth-child(3) .rank{
+    background:var(--red);color:#fff;
+  }
+  ul.list a{
+    color:var(--paper);text-decoration:none;flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  ul.list a:hover{color:var(--gold);text-decoration:underline;}
+  .hot{
+    flex-shrink:0;font-family:"Consolas","Menlo",monospace;
+    font-size:11px;color:var(--gold);
+  }
+
+  .fallback{
+    padding:14px 16px;font-size:13px;color:var(--paper-dim);
+  }
+  .fallback .links{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;
+  }
+  .fallback a{
+    display:inline-block;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    color:var(--paper);
+    text-decoration:none;
+    font-size:12px;
+    transition:.15s;
+  }
+  .fallback a:hover{border-color:var(--gold);color:var(--gold);}
+
+  .card-foot{
+    padding:10px 16px;border-top:1px solid var(--line);
+    font-size:12px;
+  }
+  .card-foot a{color:var(--paper-dim);text-decoration:none;}
+  .card-foot a:hover{color:var(--gold);}
+
+  .toolbar{
+    margin-top:24px;display:flex;justify-content:center;
+  }
+  .refresh-btn{
+    background:var(--red);color:#fff;border:none;
+    padding:10px 28px;border-radius:24px;
+    font-size:14px;font-weight:700;letter-spacing:2px;
+    cursor:pointer;
+  }
+  .refresh-btn:hover{background:#ff5a4d;}
+
+  footer{
+    text-align:center;margin-top:32px;
+    font-size:12px;color:var(--paper-dim);
+    line-height:1.8;
+  }
+  footer a{color:var(--paper-dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="stamp">号外</div>
+      <div>
+        <h1>吃瓜早报</h1>
+        <p>国内 / 海外明星动态 · 国内 / 国际重大新闻 · 实时聚合</p>
+      </div>
+    </div>
+    <div class="clock-box">
+      <div><span class="live-dot"></span>实时同步</div>
+      <div class="time" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 国内娱乐吃瓜 -->
+    <section class="card" id="card-domestic-star">
+      <div class="card-head">
+        <div class="tag gua">瓜</div>
+        <div>
+          <h2>国内娱乐吃瓜</h2>
+          <p class="sub">微博热搜 · 实时</p>
+        </div>
+        <div class="status" id="status-domestic-star">加载中…</div>
+      </div>
+      <ul class="list" id="list-domestic-star"></ul>
+      <div class="card-foot">
+        <a href="https://s.weibo.com/top/summary" target="_blank" rel="noopener">微博热搜榜 →</a>
+        ・
+        <a href="https://ent.sina.com.cn/star/index.shtml" target="_blank" rel="noopener">新浪娱乐明星 →</a>
+        ・
+        <a href="https://ent.163.com/" target="_blank" rel="noopener">网易娱乐 →</a>
+      </div>
+    </section>
+
+    <!-- 海外明星 -->
+    <section class="card" id="card-overseas-star">
+      <div class="card-head">
+        <div class="tag star">星</div>
+        <div>
+          <h2>海外明星动态</h2>
+          <p class="sub">知乎热榜 / 直达入口</p>
+        </div>
+        <div class="status" id="status-overseas-star">加载中…</div>
+      </div>
+      <ul class="list" id="list-overseas-star"></ul>
+      <div class="fallback" id="fallback-overseas-star" style="display:none;">
+        实时榜暂未取到海外娱乐相关条目，可直达以下站点查看好莱坞 / 韩娱 / 日娱等海外明星资讯：
+        <div class="links">
+          <a href="https://www.aboluowang.com/ent/" target="_blank" rel="noopener">阿波罗网娱乐</a>
+          <a href="https://www.ellechina.com/celeb/gossip/" target="_blank" rel="noopener">ELLE 明星资讯</a>
+          <a href="https://ent.sina.com.cn/star/index.shtml" target="_blank" rel="noopener">新浪娱乐·好莱坞/韩娱</a>
+          <a href="https://www.worldjournal.com/search/tagging/8877/%E5%85%AB%E5%8D%A6" target="_blank" rel="noopener">世界新闻网·八卦</a>
+        </div>
+      </div>
+      <div class="card-foot">
+        <a href="https://www.aboluowang.com/ent/" target="_blank" rel="noopener">海外明星专题 →</a>
+      </div>
+    </section>
+
+    <!-- 国内要闻 -->
+    <section class="card" id="card-domestic-news">
+      <div class="card-head">
+        <div class="tag news">闻</div>
+        <div>
+          <h2>国内重大新闻</h2>
+          <p class="sub">今日头条热榜 · 实时</p>
+        </div>
+        <div class="status" id="status-domestic-news">加载中…</div>
+      </div>
+      <ul class="list" id="list-domestic-news"></ul>
+      <div class="card-foot">
+        <a href="https://top.baidu.com/board?tab=realtime" target="_blank" rel="noopener">百度热搜 →</a>
+        ・
+        <a href="http://www.xinhuanet.com/" target="_blank" rel="noopener">新华网 →</a>
+        ・
+        <a href="https://www.chinanews.com.cn/" target="_blank" rel="noopener">中国新闻网 →</a>
+      </div>
+    </section>
+
+    <!-- 国际要闻 -->
+    <section class="card" id="card-world-news">
+      <div class="card-head">
+        <div class="tag world">环</div>
+        <div>
+          <h2>国际要闻视野</h2>
+          <p class="sub">直达权威国际新闻站点</p>
+        </div>
+        <div class="status" id="status-world-news"></div>
+      </div>
+      <div class="fallback">
+        国际新闻时效性强、来源较多，建议直达以下权威站点获取最新国际要闻：
+        <div class="links">
+          <a href="https://world.huanqiu.com/" target="_blank" rel="noopener">环球网·国际</a>
+          <a href="http://www.xinhuanet.com/world/" target="_blank" rel="noopener">新华网·国际</a>
+          <a href="https://www.chinadaily.com.cn/world" target="_blank" rel="noopener">中国日报·国际</a>
+          <a href="http://www.cankaoxiaoxi.com/" target="_blank" rel="noopener">参考消息</a>
+          <a href="https://www.thepaper.cn/channel_25950" target="_blank" rel="noopener">澎湃新闻·国际</a>
+        </div>
+      </div>
+      <ul class="list" id="list-world-news"></ul>
+      <div class="card-foot">
+        <a href="https://world.huanqiu.com/" target="_blank" rel="noopener">查看更多国际新闻 →</a>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toolbar">
+    <button class="refresh-btn" onclick="loadAll()">刷新热点</button>
+  </div>
+
+  <footer>
+    数据来源于第三方公开热榜接口（微博 / 知乎 / 今日头条），仅供参考，若接口暂时不可用会自动显示直达链接。<br>
+    本页面不存储任何个人数据，所有链接均跳转至对应官方网站。
+  </footer>
+</div>
+
+<script>
+// ---------- 时钟 ----------
+function tick(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent =
+    `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+setInterval(tick,1000); tick();
+
+// ---------- 通用：尝试多个候选接口，取第一个成功的 ----------
+async function fetchFirstWorking(urls){
+  for(const url of urls){
+    try{
+      const res = await fetch(url, {cache:"no-store"});
+      if(!res.ok) continue;
+      const json = await res.json();
+      const data = json.data || json.result || json.list;
+      if(Array.isArray(data) && data.length){
+        return data;
+      }
+    }catch(e){ /* 尝试下一个 */ }
+  }
+  return null;
+}
+
+function normItem(item, idx){
+  return {
+    rank: item.index ?? item.rank ?? (idx+1),
+    title: item.title ?? item.word ?? item.name ?? item.keyword ?? '未知标题',
+    hot: item.hot ?? item.hotValue ?? item.hot_value ?? '',
+    url: item.url ?? item.mobilUrl ?? item.link ?? '#'
+  };
+}
+
+function renderList(listEl, items, limit=8){
+  listEl.innerHTML = '';
+  items.slice(0, limit).forEach((raw, idx) => {
+    const it = normItem(raw, idx);
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="rank">${it.rank}</span>
+      <a href="${it.url}" target="_blank" rel="noopener">${it.title}</a>
+      <span class="hot">${it.hot}</span>
+    `;
+    listEl.appendChild(li);
+  });
+}
+
+function setStatus(id, text){
+  const el = document.getElementById(id);
+  if(el) el.textContent = text;
+}
+
+const now = () => {
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} 更新`;
+};
+
+// ---------- 各板块加载 ----------
+async function loadDomesticStar(){
+  setStatus('status-domestic-star','加载中…');
+  const data = await fetchFirstWorking([
+    'https://api.vvhan.com/api/hotlist/wbHot',
+    'https://api.vvhan.com/api/hotlist/weibo',
+    'https://api.vvhan.com/api/hotlist?type=weibo'
+  ]);
+  const listEl = document.getElementById('list-domestic-star');
+  if(data){
+    renderList(listEl, data);
+    setStatus('status-domestic-star', now());
+  }else{
+    listEl.innerHTML = '<li>实时热搜接口暂不可用，请点击下方"微博热搜榜"直达查看。</li>';
+    setStatus('status-domestic-star','离线');
+  }
+}
+
+async function loadOverseasStar(){
+  setStatus('status-overseas-star','加载中…');
+  const data = await fetchFirstWorking([
+    'https://api.vvhan.com/api/hotlist/zhihuHot',
+    'https://api.vvhan.com/api/hotlist/zhihu',
+    'https://api.vvhan.com/api/hotlist?type=zhihu'
+  ]);
+  const listEl = document.getElementById('list-overseas-star');
+  const fb = document.getElementById('fallback-overseas-star');
+  if(data){
+    // 知乎热榜内容较杂，筛选可能涉及明星/影视/娱乐的条目
+    const keywords = ['明星','演员','影帝','影后','歌手','韩','日','好莱坞','偶像','艺人','导演','网红','演唱会','电影','剧组','离婚','官宣','恋情'];
+    const filtered = data.filter(it=>{
+      const t = it.title || it.word || '';
+      return keywords.some(k=>t.includes(k));
+    });
+    if(filtered.length){
+      renderList(listEl, filtered, 8);
+      fb.style.display='none';
+      setStatus('status-overseas-star', now());
+    }else{
+      listEl.innerHTML='';
+      fb.style.display='block';
+      setStatus('status-overseas-star','无相关条目');
+    }
+  }else{
+    listEl.innerHTML='';
+    fb.style.display='block';
+    setStatus('status-overseas-star','离线');
+  }
+}
+
+async function loadDomesticNews(){
+  setStatus('status-domestic-news','加载中…');
+  const data = await fetchFirstWorking([
+    'https://api.vvhan.com/api/hotlist/toutiao',
+    'https://api.vvhan.com/api/hotlist?type=toutiao',
+    'https://api.vvhan.com/api/hotlist/baiduRD',
+    'https://api.vvhan.com/api/hotlist?type=baidu'
+  ]);
+  const listEl = document.getElementById('list-domestic-news');
+  if(data){
+    renderList(listEl, data);
+    setStatus('status-domestic-news', now());
+  }else{
+    listEl.innerHTML = '<li>实时热榜接口暂不可用，请点击下方"百度热搜"或"新华网"直达查看。</li>';
+    setStatus('status-domestic-news','离线');
+  }
+}
+
+function loadAll(){
+  loadDomesticStar();
+  loadOverseasStar();
+  loadDomesticNews();
+}
+loadAll();
+// 每 5 分钟自动刷新一次
+setInterval(loadAll, 5*60*1000);
+</script>
+</body>
+</html>
