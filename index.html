@@ -326,8 +326,8 @@
   </div>
 
   <footer>
-    数据来源于第三方公开热榜接口（微博 / 知乎 / 今日头条），仅供参考，若接口暂时不可用会自动显示直达链接。<br>
-    本页面不存储任何个人数据，所有链接均跳转至对应官方网站。
+    数据来源于第三方公开热榜聚合接口（pearktrue.cn / xxapi.cn），仅供参考，若接口暂时不可用会自动显示直达链接。<br>
+    本页面不存储任何个人数据，所有链接均跳转至对应官方网站。若长时间显示"离线"，可能是当前网络环境屏蔽了该接口域名，可尝试更换网络或直接使用下方直达链接。
   </footer>
 </div>
 
@@ -348,11 +348,12 @@ async function fetchFirstWorking(urls){
       const res = await fetch(url, {cache:"no-store"});
       if(!res.ok) continue;
       const json = await res.json();
-      const data = json.data || json.result || json.list;
+      // 兼容不同接口的字段命名习惯
+      const data = json.data || json.result?.data || json.result || json.list || json.newslist;
       if(Array.isArray(data) && data.length){
         return data;
       }
-    }catch(e){ /* 尝试下一个 */ }
+    }catch(e){ /* 跨域/超时/格式异常，尝试下一个备用源 */ }
   }
   return null;
 }
@@ -360,9 +361,9 @@ async function fetchFirstWorking(urls){
 function normItem(item, idx){
   return {
     rank: item.index ?? item.rank ?? (idx+1),
-    title: item.title ?? item.word ?? item.name ?? item.keyword ?? '未知标题',
-    hot: item.hot ?? item.hotValue ?? item.hot_value ?? '',
-    url: item.url ?? item.mobilUrl ?? item.link ?? '#'
+    title: item.title ?? item.word ?? item.name ?? item.keyword ?? item.query ?? '未知标题',
+    hot: item.hot ?? item.hotValue ?? item.hot_value ?? item.desc ?? '',
+    url: item.url ?? item.mobilUrl ?? item.link ?? item.mobil_url ?? '#'
   };
 }
 
@@ -395,16 +396,16 @@ const now = () => {
 async function loadDomesticStar(){
   setStatus('status-domestic-star','加载中…');
   const data = await fetchFirstWorking([
-    'https://api.vvhan.com/api/hotlist/wbHot',
-    'https://api.vvhan.com/api/hotlist/weibo',
-    'https://api.vvhan.com/api/hotlist?type=weibo'
+    'https://api.pearktrue.cn/api/dailyhot/?title=微博',
+    'https://v2.xxapi.cn/api/weibohot',
+    'https://api.aa1.cn/api/weibo-rs'
   ]);
   const listEl = document.getElementById('list-domestic-star');
   if(data){
     renderList(listEl, data);
     setStatus('status-domestic-star', now());
   }else{
-    listEl.innerHTML = '<li>实时热搜接口暂不可用，请点击下方"微博热搜榜"直达查看。</li>';
+    listEl.innerHTML = '<li style="color:var(--paper-dim);">实时接口暂时无法访问，请点击下方"微博热搜榜"直达查看。</li>';
     setStatus('status-domestic-star','离线');
   }
 }
@@ -412,9 +413,8 @@ async function loadDomesticStar(){
 async function loadOverseasStar(){
   setStatus('status-overseas-star','加载中…');
   const data = await fetchFirstWorking([
-    'https://api.vvhan.com/api/hotlist/zhihuHot',
-    'https://api.vvhan.com/api/hotlist/zhihu',
-    'https://api.vvhan.com/api/hotlist?type=zhihu'
+    'https://api.pearktrue.cn/api/dailyhot/?title=知乎',
+    'https://v2.xxapi.cn/api/zhihuhot'
   ]);
   const listEl = document.getElementById('list-overseas-star');
   const fb = document.getElementById('fallback-overseas-star');
@@ -444,17 +444,16 @@ async function loadOverseasStar(){
 async function loadDomesticNews(){
   setStatus('status-domestic-news','加载中…');
   const data = await fetchFirstWorking([
-    'https://api.vvhan.com/api/hotlist/toutiao',
-    'https://api.vvhan.com/api/hotlist?type=toutiao',
-    'https://api.vvhan.com/api/hotlist/baiduRD',
-    'https://api.vvhan.com/api/hotlist?type=baidu'
+    'https://api.pearktrue.cn/api/dailyhot/?title=今日头条',
+    'https://api.pearktrue.cn/api/dailyhot/?title=百度',
+    'https://v2.xxapi.cn/api/baiduhot'
   ]);
   const listEl = document.getElementById('list-domestic-news');
   if(data){
     renderList(listEl, data);
     setStatus('status-domestic-news', now());
   }else{
-    listEl.innerHTML = '<li>实时热榜接口暂不可用，请点击下方"百度热搜"或"新华网"直达查看。</li>';
+    listEl.innerHTML = '<li style="color:var(--paper-dim);">实时接口暂时无法访问，请点击下方"百度热搜"或"新华网"直达查看。</li>';
     setStatus('status-domestic-news','离线');
   }
 }
